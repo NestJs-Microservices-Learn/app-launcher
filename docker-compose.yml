@@ -6,19 +6,6 @@ services:
         ports:
             - 8222:8222
 
-    orders-db:
-        container_name: orders_database
-        image: postgres:16.2
-        restart: always
-        volumes:
-            - ./orders-ms/postgres:/var/lib/postgresql/data
-        ports:
-            - 5432:5432
-        environment:
-            - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=123456
-            - POSTGRES_DB=ordersdb
-
     client-gateway:
         build: ./client-gateway
         ports:
@@ -32,8 +19,6 @@ services:
 
     products-ms:
         build: ./products-ms
-        ports:
-            - 3001:3001
         volumes:
             - ./products-ms/src:/usr/src/app/src
         command: npm run start:dev
@@ -46,8 +31,6 @@ services:
         depends_on:
             - orders-db
         build: ./orders-ms
-        ports:
-            - 3002:3002
         volumes:
             - ./orders-ms/src:/usr/src/app/src
         command: npm run start:dev
@@ -55,3 +38,31 @@ services:
             - PORT=3002
             - NATS_SERVERS=nats://nats-server:4222
             - DATABASE_URL=postgresql://postgres:123456@orders-db:5432/ordersdb?schema=public
+
+    orders-db:
+        container_name: orders_database
+        image: postgres:16.3
+        restart: always
+        volumes:
+            - ./orders-ms/postgres:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=123456
+            - POSTGRES_DB=ordersdb
+
+    payments-ms:
+        build: ./payments-ms
+        volumes:
+            - ./payments-ms/src:/usr/src/app/src
+        command: npm run start:dev
+        ports:
+            - ${PAYMENTS_MS_PORT}:${PAYMENTS_MS_PORT}
+        environment:
+            - PORT=${PAYMENTS_MS_PORT}
+            - NATS_SERVERS=nats://nats-server:4222
+            - STRIPE_SECRET=${PAYMENTS_STRIPE_SECRET}
+            - STRIPE_SUCCESS_URL=${PAYMENTS_STRIPE_SUCCESS_URL}
+            - STRIPE_CANCELLED_URL=${PAYMENTS_STRIPE_CANCELLED_URL}
+            - STRIPE_ENDPOINT_SECRET=${PAYMENTS_STRIPE_ENDPOINT_SECRET}
