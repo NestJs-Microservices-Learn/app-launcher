@@ -37,7 +37,7 @@ services:
     #     environment:
     #         - PORT=3002
     #         - NATS_SERVERS=nats://nats-server:4222
-    #         - DATABASE_URL=postgresql://postgres:123456@orders-db:5432/ordersdb?schema=public
+    #         - DATABASE_URL=${ORDERS_DATABASE_URL}
 
     # orders-db:
     #     container_name: orders_database
@@ -46,11 +46,11 @@ services:
     #     volumes:
     #         - ./orders-ms/postgres:/var/lib/postgresql/data
     #     ports:
-    #         - 5432:5432
+    #         - ${ORDERS_DB_PORT}:${ORDERS_DB_PORT}
     #     environment:
-    #         - POSTGRES_USER=postgres
-    #         - POSTGRES_PASSWORD=123456
-    #         - POSTGRES_DB=ordersdb
+    #         - POSTGRES_USER=${POSTGRES_USER}
+    #         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    #         - POSTGRES_DB=${POSTGRES_DB}
 
     # payments-ms:
     #     build: ./payments-ms
@@ -75,3 +75,5 @@ services:
         environment:
             - PORT=3004
             - NATS_SERVERS=nats://nats-server:4222
+            - DATABASE_URL=${AUTH_DATABASE_URL}
+            - JWT_SECRET=${JWT_SECRET}
