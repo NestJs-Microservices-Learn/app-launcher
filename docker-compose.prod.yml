@@ -8,7 +8,7 @@ services:
         build:
             context: ./client-gateway
             dockerfile: dockerfile.prod
-        image: europe-southwest1-docker.pkg.dev/tienda-microservices-430107/tienda-microservices/client-gateway-prod
+        image: europe-southwest1-docker.pkg.dev/tienda-microservices-430107/tienda-microservices/client-gateway
         ports:
             - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
         environment:
